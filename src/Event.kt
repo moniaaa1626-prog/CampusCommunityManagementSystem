@@ -6,7 +6,7 @@ class Event(
     var date: String,
     var time: String,
     var location: String,
-    var macCapacity: Int,
+    var maxCapacity: Int,
     var status: String,
 ) {
 }
