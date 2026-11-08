@@ -15,8 +15,47 @@ fun main() {
         println("Time: " + event.time)
         println("Location: " + event.location)
         println("Capacity: " + event.maxCapacity)
-        println("Status: " + event.status)
 
+        val booked = system.reservations.count {
+            it.event.eventId == event.eventId &&
+                    (it.status == "Active" || it.status == "Completed")
+        }
+        val available = event.maxCapacity - booked
+
+        println("Booked places: " + booked)
+        println("Available places: " + available)
+
+
+        if (event.status == "Upcoming" && available == 0) {
+            println("Status: Full")
+        } else {
+            println("Status: " + event.status)
+        }
+    }
+
+
+
+        println()
+        print("Search by tittle, category, organiser or date: ")
+        val search = readln()
+
+        var found = false
+
+    for (event in system.events) {
+        if (
+            event.title.contains(search, ignoreCase = true) ||
+            event.category.contains(search, ignoreCase = true) ||
+            event.organiser.contains(search, ignoreCase = true) ||
+            event.date.contains(search, ignoreCase = true))  {
+
+
+            println("Found: " + event.eventId + " - " + event.title)
+            found = true
+        }
+    }
+
+    if (!found) {
+        println("No matching events found.")
 
     }
 }
