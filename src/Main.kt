@@ -58,4 +58,40 @@ fun main() {
         println("No matching events found.")
 
     }
+    println()
+    print("Enter event ID to view details: ")
+    val selectedId = readln()
+
+    val selectedEvent = system.events.find {
+        it.eventId.equals(selectedId, ignoreCase = true)
+
+    }
+     if (selectedEvent != null) {
+
+         val booked = system .reservations.count {
+             it.event.eventId == selectedEvent.eventId &&
+             (it.status == "Active" || it.status == "Completed")
+        }
+
+         val available = selectedEvent.maxCapacity - booked
+
+
+         println("Category: ${selectedEvent.category}")
+         println("Organiser: ${selectedEvent.organiser}")
+         println("Date: ${selectedEvent.date}")
+         println("Time: ${selectedEvent.time}")
+         println("Location: ${selectedEvent.location}")
+         println("Maximum capacity: ${selectedEvent.maxCapacity}")
+         println("Booked places: $booked")
+         println("Available places: $available")
+
+         if (selectedEvent.status =="Upcoming" && available == 0) {
+             println("Status: Full")
+         } else {
+             println("Status: ${selectedEvent.status}")
+         }
+     } else {
+         println("No matching events found.")
+     }
+
 }
