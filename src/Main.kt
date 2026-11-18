@@ -127,89 +127,10 @@ fun main() {
                     println("No matching events found.")
                 }
 
-                val reservedPlaces = system.reservations.count {
-                    it.event.eventId == selectedEvent.eventId &&
-                            (it.status == "Active" || it.status == "Completed")
-                }
-                val remainingPlaces = selectedEvent.maxCapacity - reservedPlaces
+            }
 
-
-                if (selectedEvent.status != "Upcoming") {
-                    println("This event is not available for reservation.")
-
-                } else if (remainingPlaces <= 0) {
-                    println("This event is full. No places available")
-
-                } else {
-                    println()
-                    println("Make event reservation")
-
-
-                    var selectedStudent: Student? = null
-
-                    while (selectedStudent == null) {
-                        print("Enter your Student ID: ")
-                        val studentId = readln()
-
-                        selectedStudent = system.students.find {
-                            it.studentId.equals(studentId, ignoreCase = true)
-                        }
-
-                        if (selectedStudent == null) {
-                            println("Student Id does not exist. Please try again.")
-                        } else {
-                            println("Student found:  ${selectedStudent.fullName}")
-
-                            val alreadyReserved = system.reservations.any {
-                                it.student.studentId == selectedStudent.studentId &&
-                                        it.event.eventId == selectedEvent.eventId &&
-                                        it.status == "Active"
-                            }
-                            if (alreadyReserved) {
-                                println("You already have reservation for this event. ")
-                            } else {
-                                println("You can make reservation for this event.")
-
-
-                                val reservationId = "R%03d".format(
-                                    (system.reservations.mapNotNull {
-                                        it.reservationId.removePrefix("R").toIntOrNull()
-                                    }.maxOrNull() ?: 0) + 1
-                                )
-
-                                val newReservation = Reservation(
-                                    reservationId,
-                                    selectedStudent,
-                                    selectedEvent,
-                                    "Active"
-
-                                )
-
-                                system.reservations.add(newReservation)
-
-                                println("Reservation created successfully.")
-                                println("Reservation ID: $reservationId")
-
-                                println("*********************************")
-                                println("CAMPUS COMMUNITY")
-                                println("EVENT RESERVATION")
-                                println("Student: ${selectedStudent.fullName}")
-                                println("Student ID: ${selectedStudent.studentId}")
-                                println("Event: ${selectedEvent.title}")
-                                println("Category: ${selectedEvent.category}")
-                                println("Date: ${selectedEvent.date}")
-                                println("Time: ${selectedEvent.time}")
-                                println("Location: ${selectedEvent.location}")
-                                println("Reservation ID: $reservationId")
-                                println("**********************************")
-
-
-                            }
-                        }
-                    }
-
-
-                }
+            "2" -> {
+                makeEventReservation(system)
             }
 
             "3" -> {
@@ -295,3 +216,125 @@ fun main() {
 
     }
 }
+
+fun viewAndSearchEvents(system: CampusSystem) {
+
+}
+
+fun makeEventReservation(system: CampusSystem) {
+
+    println("====== MAKE EVENT RESERVATION ======")
+
+    var selectedEvent: Event? = null
+    while (selectedEvent == null) {
+        print("Enter Event ID to reserve: ")
+        val eventId = readln()
+
+        selectedEvent = system.events.find{
+            it.eventId.equals(eventId, ignoreCase = true)
+        }
+
+        if (selectedEvent == null) {
+            println("Event Id does not exist. Please try again.")
+        }
+    }
+    println("Selected event: ${selectedEvent.title}")
+
+    val reservedPlaces = system.reservations.count {
+        it.event.eventId == selectedEvent.eventId &&
+                (it.status == "Active" || it.status == "Completed")
+    }
+    val remainingPlaces = selectedEvent.maxCapacity - reservedPlaces
+
+    println("Availble places: $remainingPlaces")
+
+    if (selectedEvent.status != "Upcoming") {
+        println("This event is not available for reservation.")
+        return
+
+    }
+    if (remainingPlaces <= 0) {
+        println("This event is full. No places available")
+        return
+
+    }
+
+    println("This event is available for reservation")
+
+    var selectedStudent: Student? = null
+
+    while (selectedStudent == null) {
+        print("Enter your Student ID: ")
+        val studentId = readln()
+
+        selectedStudent = system.students.find {
+            it.studentId.equals(studentId, ignoreCase = true)
+        }
+
+        if (selectedStudent == null) {
+            println("Student Id does not exist. Please try again.")
+        }
+
+    }
+
+    println("Student found:  ${selectedStudent.fullName}")
+
+    val alreadyReserved = system.reservations.any {
+        it.student.studentId == selectedStudent.studentId &&
+                it.event.eventId == selectedEvent.eventId &&
+                it.status == "Active"
+    }
+
+    if (alreadyReserved) {
+        println("You already have reservation for this event. ")
+        return
+    }
+
+
+    println("You can make reservation for this event.")
+
+    val reservationId = "R%03d".format(
+        (system.reservations.mapNotNull {
+            it.reservationId.removePrefix("R").toIntOrNull()
+        }.maxOrNull() ?: 0) + 1
+    )
+
+    println("New reservation ID: $reservationId")
+
+    val newReservation = Reservation(
+        reservationId,
+        selectedStudent,
+        selectedEvent,
+        "Active"
+
+    )
+
+    system.reservations.add(newReservation)
+
+    println("Reservation created successfully.")
+    println("Reservation ID: $reservationId")
+
+    println("*********************************")
+    println("CAMPUS COMMUNITY")
+    println("EVENT RESERVATION")
+    println("Student: ${selectedStudent.fullName}")
+    println("Student ID: ${selectedStudent.studentId}")
+    println("Event: ${selectedEvent.title}")
+    println("Category: ${selectedEvent.category}")
+    println("Date: ${selectedEvent.date}")
+    println("Time: ${selectedEvent.time}")
+    println("Location: ${selectedEvent.location}")
+    println("Reservation ID: $reservationId")
+    println("**********************************")
+
+
+
+
+
+
+
+
+
+
+
+        }
