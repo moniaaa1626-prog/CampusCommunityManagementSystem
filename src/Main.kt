@@ -24,109 +24,7 @@ fun main() {
                 return
             }
             "1" -> {
-
-
-                for (event in system.events) {
-                    println("------------------------------")
-                    println("Event ID: " + event.eventId)
-                    println("Title: " + event.title)
-                    println("Category: " + event.category)
-                    println("Organiser: " + event.organiser)
-                    println("Date: " + event.date)
-                    println("Time: " + event.time)
-                    println("Location: " + event.location)
-                    println("Capacity: " + event.maxCapacity)
-
-                    val booked = system.reservations.count {
-                        it.event.eventId == event.eventId &&
-                                (it.status == "Active" || it.status == "Completed")
-                    }
-                    val available = event.maxCapacity - booked
-
-                    println("Booked places: " + booked)
-                    println("Available places: " + available)
-
-
-                    if (event.status == "Upcoming" && available == 0) {
-                        println("Status: Full")
-                    } else {
-                        println("Status: " + event.status)
-                    }
-                }
-
-
-
-                println()
-                print("Search by tittle, category, organiser or date: ")
-                val search = readln()
-
-                var found = false
-
-                for (event in system.events) {
-                    if (
-                        event.eventId.equals(search, ignoreCase = true) ||
-                        event.title.contains(search, ignoreCase = true) ||
-                        event.category.contains(search, ignoreCase = true) ||
-                        event.organiser.contains(search, ignoreCase = true) ||
-                        event.date.contains(search, ignoreCase = true)
-                    ) {
-
-
-                        println("Found: " + event.eventId + " - " + event.title)
-                        found = true
-                    }
-                }
-
-                if (!found) {
-                    println("No matching events found.")
-
-                }
-
-
-                var selectedEvent: Event? = null
-
-                while (selectedEvent == null) {
-                    print("Enter event Id to view details: ")
-                    val selectedId = readln()
-
-                    selectedEvent = system.events.find {
-                        it.eventId.equals(selectedId, ignoreCase = true)
-                    }
-
-                    if (selectedEvent == null) {
-                        println("Event ID does not exist. Please try again.")
-
-                    }
-
-                }
-                if (selectedEvent != null) {
-
-                    val booked = system.reservations.count {
-                        it.event.eventId == selectedEvent.eventId &&
-                                (it.status == "Active" || it.status == "Completed")
-                    }
-
-                    val available = selectedEvent.maxCapacity - booked
-
-
-                    println("Category: ${selectedEvent.category}")
-                    println("Organiser: ${selectedEvent.organiser}")
-                    println("Date: ${selectedEvent.date}")
-                    println("Time: ${selectedEvent.time}")
-                    println("Location: ${selectedEvent.location}")
-                    println("Maximum capacity: ${selectedEvent.maxCapacity}")
-                    println("Booked places: $booked")
-                    println("Available places: $available")
-
-                    if (selectedEvent.status == "Upcoming" && available == 0) {
-                        println("Status: Full")
-                    } else {
-                        println("Status: ${selectedEvent.status}")
-                    }
-                } else {
-                    println("No matching events found.")
-                }
-
+                viewAndSearchEvents(system)
             }
 
             "2" -> {
@@ -134,92 +32,120 @@ fun main() {
             }
 
             "3" -> {
-                println("===== MY RESERVATION =====")
-                println("Enter your Student ID: ")
-
-                val studentId = readln()
-
-                val student = system.students.find {
-                    it.studentId.equals(studentId, ignoreCase = true)
-
-                }
-
-                if (student == null) {
-                    println("Student ID does not exist. Please try again.")
-                } else {
-                    println("Student found:  ${student.fullName}")
-
-                    val studentReservations = system.reservations.filter {
-                        it.student.studentId == student.studentId
-                    }
-
-                    if (studentReservations.isEmpty()) {
-                        println("You have no reservations.")
-                    } else {
-                        println("====== Your Reservations ======")
-
-                        for (reservation in studentReservations) {
-                            println("------------------------------")
-                            println("Reservation ID: ${reservation.reservationId}")
-                            println("Event: ${reservation.event.title}")
-                            println("Date: ${reservation.event.date}")
-                            println("Time: ${reservation.event.time}")
-                            println("Status: ${reservation.status}")
-
-
-                        }
-                        println()
-                        print("Enter Reservation ID to cancel (or ) to go back): ")
-                        val cancelId = readln()
-
-                        if (cancelId == "0") {
-                            println("No reservation cancelled")
-                        } else {
-                            val reservationToCancel = studentReservations.find {
-                                it.reservationId.equals(cancelId, ignoreCase = true)
-                            }
-
-                            if (reservationToCancel == null) {
-                                println("Reservation ID not found for this student.")
-                            } else {
-                                println("Reservation found: ${reservationToCancel.event.title}")
-                                println("Current status: ${reservationToCancel.status}")
-
-                                if (reservationToCancel.status != "Active" ||
-                                    reservationToCancel.event.status != "Upcoming"
-                                ) {
-
-                                    println("This reservation cannot be cancel")
-
-                                } else {
-                                    print("Are you sure you want to cancel this reservation? (Y/N): ")
-                                    val confirm = readln()
-
-                                    if (confirm.equals("Y", ignoreCase = true)) {
-                                        reservationToCancel.status = "User Cancelled"
-                                        println("Reservation cancelled successfully.")
-                                    } else {
-                                        println("Cancellation not completed.")
-                                    }
-
-                                }
-
-
-                            }
-
-                        }
-                    }
-                }
-
+                viewAndCancelReservation(system)
             }
         }
 
     }
 }
-
 fun viewAndSearchEvents(system: CampusSystem) {
 
-}
+
+        for (event in system.events) {
+            println("------------------------------")
+            println("Event ID: " + event.eventId)
+            println("Title: " + event.title)
+            println("Category: " + event.category)
+            println("Organiser: " + event.organiser)
+            println("Date: " + event.date)
+            println("Time: " + event.time)
+            println("Location: " + event.location)
+            println("Capacity: " + event.maxCapacity)
+
+            val booked = system.reservations.count {
+                it.event.eventId == event.eventId &&
+                        (it.status == "Active" || it.status == "Completed")
+            }
+            val available = event.maxCapacity - booked
+
+            println("Booked places: " + booked)
+            println("Available places: " + available)
+
+
+            if (event.status == "Upcoming" && available == 0) {
+                println("Status: Full")
+            } else {
+                println("Status: " + event.status)
+            }
+        }
+
+
+
+        println()
+        print("Search by tittle, category, organiser or date: ")
+        val search = readln()
+
+        var found = false
+
+        for (event in system.events) {
+            if (
+                event.eventId.equals(search, ignoreCase = true) ||
+                event.title.contains(search, ignoreCase = true) ||
+                event.category.contains(search, ignoreCase = true) ||
+                event.organiser.contains(search, ignoreCase = true) ||
+                event.date.contains(search, ignoreCase = true)
+            ) {
+
+
+                println("Found: " + event.eventId + " - " + event.title)
+                found = true
+            }
+        }
+
+        if (!found) {
+            println("No matching events found.")
+
+        }
+
+
+        var selectedEvent: Event? = null
+
+        while (selectedEvent == null) {
+            print("Enter event Id to view details: ")
+            val selectedId = readln()
+
+            selectedEvent = system.events.find {
+                it.eventId.equals(selectedId, ignoreCase = true)
+            }
+
+            if (selectedEvent == null) {
+                println("Event ID does not exist. Please try again.")
+
+            }
+
+        }
+        if (selectedEvent != null) {
+
+            val booked = system.reservations.count {
+                it.event.eventId == selectedEvent.eventId &&
+                        (it.status == "Active" || it.status == "Completed")
+            }
+
+            val available = selectedEvent.maxCapacity - booked
+
+
+            println("Category: ${selectedEvent.category}")
+            println("Organiser: ${selectedEvent.organiser}")
+            println("Date: ${selectedEvent.date}")
+            println("Time: ${selectedEvent.time}")
+            println("Location: ${selectedEvent.location}")
+            println("Maximum capacity: ${selectedEvent.maxCapacity}")
+            println("Booked places: $booked")
+            println("Available places: $available")
+
+            if (selectedEvent.status == "Upcoming" && available == 0) {
+                println("Status: Full")
+            } else {
+                println("Status: ${selectedEvent.status}")
+            }
+        } else {
+            println("No matching events found.")
+        }
+
+
+    }
+
+
 
 fun makeEventReservation(system: CampusSystem) {
 
@@ -246,7 +172,7 @@ fun makeEventReservation(system: CampusSystem) {
     }
     val remainingPlaces = selectedEvent.maxCapacity - reservedPlaces
 
-    println("Availble places: $remainingPlaces")
+    println("Available places: $remainingPlaces")
 
     if (selectedEvent.status != "Upcoming") {
         println("This event is not available for reservation.")
@@ -326,15 +252,84 @@ fun makeEventReservation(system: CampusSystem) {
     println("Location: ${selectedEvent.location}")
     println("Reservation ID: $reservationId")
     println("**********************************")
+}
+
+fun viewAndCancelReservation(system: CampusSystem) {
+    println("===== MY RESERVATION =====")
+    println("Enter your Student ID: ")
+
+    val studentId = readln()
+
+    val student = system.students.find {
+        it.studentId.equals(studentId, ignoreCase = true)
+
+    }
+
+    if (student == null) {
+        println("Student ID does not exist. Please try again.")
+    } else {
+        println("Student found:  ${student.fullName}")
+
+        val studentReservations = system.reservations.filter {
+            it.student.studentId == student.studentId
+        }
+
+        if (studentReservations.isEmpty()) {
+            println("You have no reservations.")
+        } else {
+            println("====== Your Reservations ======")
+
+            for (reservation in studentReservations) {
+                println("------------------------------")
+                println("Reservation ID: ${reservation.reservationId}")
+                println("Event: ${reservation.event.title}")
+                println("Date: ${reservation.event.date}")
+                println("Time: ${reservation.event.time}")
+                println("Status: ${reservation.status}")
 
 
+            }
+            println()
+            print("Enter Reservation ID to cancel (or ) to go back): ")
+            val cancelId = readln()
+
+            if (cancelId == "0") {
+                println("No reservation cancelled")
+            } else {
+                val reservationToCancel = studentReservations.find {
+                    it.reservationId.equals(cancelId, ignoreCase = true)
+                }
+
+                if (reservationToCancel == null) {
+                    println("Reservation ID not found for this student.")
+                } else {
+                    println("Reservation found: ${reservationToCancel.event.title}")
+                    println("Current status: ${reservationToCancel.status}")
+
+                    if (reservationToCancel.status != "Active" ||
+                        reservationToCancel.event.status != "Upcoming"
+                    ) {
+
+                        println("This reservation cannot be cancel")
+
+                    } else {
+                        print("Are you sure you want to cancel this reservation? (Y/N): ")
+                        val confirm = readln()
+
+                        if (confirm.equals("Y", ignoreCase = true)) {
+                            reservationToCancel.status = "User Cancelled"
+                            println("Reservation cancelled successfully.")
+                        } else {
+                            println("Cancellation not completed.")
+                        }
+                    }
+
+                }
 
 
-
-
-
-
-
-
+            }
 
         }
+    }
+}
+
