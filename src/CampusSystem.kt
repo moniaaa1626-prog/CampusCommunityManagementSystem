@@ -6,8 +6,7 @@ class CampusSystem {
 
     init {
         students.add(
-            Student(
-                "aisha", "student123", "S001", "Aisha Khan", "aisha.khan@solent.ac.uk",
+            Student("aisha", "student123", "S001", "Aisha Khan", "aisha.khan@solent.ac.uk",
                 "Computing")
         )
         students.add(
@@ -15,19 +14,19 @@ class CampusSystem {
                 "Business Management")
         )
         students.add(
-            Student("maya", "Student123", "S004","Maya Patel", "maya.patel@solent.ac.uk",
+            Student("maya", "Student123", "S003","Maya Patel", "maya.patel@solent.ac.uk",
                 "Software Engineering")
         )
         students.add(
-            Student("omar", "Student123", "S005", "Omar Hassan", "omar.hass@solent.ac.uk",
+            Student("omar", "Student123", "S004", "Omar Hassan", "omar.hass@solent.ac.uk",
                 "Mathematics")
         )
         students.add(
-            Student("lucas", "Student123", "S006", "Lucas Martin", "lucas.martin@solent.ac.uk",
+            Student("lucas", "Student123", "S005", "Lucas Martin", "lucas.martin@solent.ac.uk",
                 "Digital Marketing")
         )
         students.add(
-            Student("emily","Student123","S007", "Emily Carter", "emily.carter@solent.ac.uk",
+            Student("emily","Student123","S006", "Emily Carter", "emily.carter@solent.ac.uk",
                 "Psychology")
         )
 
@@ -101,4 +100,9 @@ class CampusSystem {
             Reservation("R014", students[5], events[5], "Event Cancelled")
         )
     }
+    fun addReservation(reservation: Reservation) {
+        reservations.add(reservation)
+    }
+
+
 }

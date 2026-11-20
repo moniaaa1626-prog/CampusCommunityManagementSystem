@@ -4,4 +4,7 @@ class Reservation(
     val event: Event,
     var status: String
 ) {
+    fun cancel() {
+        status = "User Cancelled"
+    }
 }

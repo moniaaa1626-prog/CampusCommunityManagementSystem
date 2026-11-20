@@ -235,7 +235,7 @@ fun makeEventReservation(system: CampusSystem) {
 
     )
 
-    system.reservations.add(newReservation)
+    system.addReservation(newReservation)
 
     println("Reservation created successfully.")
     println("Reservation ID: $reservationId")
@@ -290,7 +290,7 @@ fun viewAndCancelReservation(system: CampusSystem) {
 
             }
             println()
-            print("Enter Reservation ID to cancel (or ) to go back): ")
+            print("Enter Reservation ID to cancel (or 0 to go back): ")
             val cancelId = readln()
 
             if (cancelId == "0") {
@@ -317,7 +317,7 @@ fun viewAndCancelReservation(system: CampusSystem) {
                         val confirm = readln()
 
                         if (confirm.equals("Y", ignoreCase = true)) {
-                            reservationToCancel.status = "User Cancelled"
+                            reservationToCancel.cancel()
                             println("Reservation cancelled successfully.")
                         } else {
                             println("Cancellation not completed.")
